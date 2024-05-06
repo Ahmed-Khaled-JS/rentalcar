@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -46,22 +47,21 @@ public class JwtService {
 
     public String createToken(Map<String,Object> extractClaims, UserDetails userDetails){
 
+        extractClaims.put("name", userDetails.getUsername());
+        extractClaims.put("roles", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toArray(String[]::new));
 
         return Jwts
                 .builder() //this for build token
                 .setClaims(extractClaims)
-                .setSubject(userDetails.getUsername()) // put username inside the token
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis())) // this to know which time the token created
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))// the token expired after 24 hours
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)// key of token and which algorthism
                 .compact();// this for returning the token
-
-
-
-
-
-
     }
+
 
     public boolean isTokenValid(String token,UserDetails userDetails){
 

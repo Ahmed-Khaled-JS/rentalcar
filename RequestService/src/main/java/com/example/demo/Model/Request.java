@@ -14,8 +14,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,16 +26,14 @@ public class Request {
     @Column(name="request_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer requestId;
- 
-    
-    @Column(name="total_price")
-    private Long totalPrice;
- 
+
+
  
      public enum RequestStatus {
  
          UNDER_REVIEW,
-         ACCEPTED
+         ACCEPTED,
+         REJECTED
      }
  
      @Column(name="status")
@@ -56,13 +52,12 @@ public class Request {
      @DateTimeFormat(pattern="yyyy-MM-dd")
      private Date to;
  
-     @ManyToOne
-     @JoinColumn(name = "user_id")
-     private User user;
+//     @ManyToOne
+//     @JoinColumn(name = "user_id")
+     private Integer userid;
  
-     @ManyToOne
-     @JoinColumn(name = "car_id")
-     private Vehicle vehicle;
+
+     private Integer vehicleid;
  
  
      @CreationTimestamp
@@ -92,23 +87,22 @@ public class Request {
      public Request(){
  
      }
-     public Request(RequestStatus status, Date from, Date to, User user, Vehicle vehicle,Long totalPrice) {
+     public Request(RequestStatus status, Date from, Date to, Integer user, Integer vehicle,Long totalPrice) {
          this.requestStatus = status;
          this.from = from;
          this.to = to;
-         this.user = user;
-         this.vehicle = vehicle;
-         this.totalPrice=totalPrice;
-     }//da ely el mafrood yet3emel 
-    
-     public Request(Integer requestId,RequestStatus status, Date from, Date to, User user, Vehicle vehicle) {
-         this.requestId = requestId;
-         this.requestStatus = status;
-         this.from = from;
-         this.to = to;
-         this.user = user;
-         this.vehicle = vehicle;
-     }
+         this.userid = user;
+         this.vehicleid = vehicle;
+     }//da ely el mafrood yet3emel
+//
+//     public Request(Integer requestId,RequestStatus status, Date from, Date to, Integer user, Integer vehicle) {
+//         this.requestId = requestId;
+//         this.requestStatus = status;
+//         this.from = from;
+//         this.to = to;
+//         this.userid = user;
+//         this.vehicleid = vehicle;
+//     }
  
      public Integer getRequestId() {
          return requestId;
@@ -135,32 +129,26 @@ public class Request {
      }
      
     
-     public User getUser() {
-         return user;
+     public Integer getUser() {
+         return userid;
      }
  
-     public void setUser(User user) {
-         this.user = user;
+     public void setUser(Integer user) {
+         this.userid = user;
      }
  
-     public Vehicle getVehicle() {
-         return vehicle;
+     public Integer getVehicle() {
+         return vehicleid;
      }
  
-     public void setVehicle(Vehicle vehicle) {
-         this.vehicle = vehicle;
+     public void setVehicle(Integer vehicle) {
+         this.vehicleid = vehicle;
      }
      public RequestStatus getStatus() {
          return requestStatus;
      }
      public void setStatus(RequestStatus status) {
          this.requestStatus = status;
-     }
-     public Long getTotalPrice() {
-         return totalPrice;
-     }
-     public void setTotalPrice(Long totalPrice) {
-         this.totalPrice = totalPrice;
      }
     
 }

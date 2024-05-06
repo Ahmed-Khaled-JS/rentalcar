@@ -1,22 +1,29 @@
 package com.example.demo.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.dto.Vehicle;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.Request;
 import com.example.demo.Model.Request.RequestStatus;
 import com.example.demo.Repository.RequestRepo;
-import com.example.demo.Repository.VehicleRepo;
+import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
+@RequiredArgsConstructor
 public class RequestService {
+        private final RestTemplate restTemplate;
 
 
-        @Autowired
-        VehicleRepo vehicleRepo;
     
         @Autowired
         RequestRepo requestRepo;
@@ -24,13 +31,12 @@ public class RequestService {
         public boolean checkRequest(Request r) {
             Date from = r.getFrom();
             Date to = r.getTo();
-    
-            if (from.before(to) && (r.getVehicle().getIsAvaliable())) {
+            String vehicleServiceUrl = "http://localhost:8081/api/vehicle/getCarById/" + r.getVehicle();
+            ResponseEntity<Boolean> isAvaliable = restTemplate.getForEntity(vehicleServiceUrl, Boolean.class);
+            if (from.before(to) && isAvaliable.getBody()) {
                 return true;
-            } else if (from.before(to) && (!r.getVehicle().getIsAvaliable())) {
-    
-                if (requestRepo.existsByDateRangeAndVehicleId(from, to, r.getVehicle().getCarTd())) {
-    
+            } else if (from.before(to) && !isAvaliable.getBody()) {
+                if (requestRepo.existsByDateRangeAndVehicleId(from, to, r.getVehicle())) {
                     return false;
                 } else {
                     return true;
@@ -46,7 +52,7 @@ public class RequestService {
                 requestRepo.save(r);
                 return true;
             }
-    
+
             return false;
         }
     
@@ -78,7 +84,6 @@ public class RequestService {
                     existingreq.setFrom(r.getFrom());
                     existingreq.setTo(r.getTo());
                     existingreq.setVehicle(r.getVehicle());
-                    existingreq.setTotalPrice(r.getTotalPrice());
                     requestRepo.save(existingreq);
                     return true;
                 }
@@ -110,6 +115,16 @@ public class RequestService {
     
             return false;
         }
-    
+    public List<Vehicle> getVehiclesOfServiceProvider(Integer serviceProviderId) {
+        String vehicleServiceUrl = "http://localhost:8081/api/vehicle/ownerVehicles/"+serviceProviderId;
+        try {
+
+            ResponseEntity<Vehicle> responseEntity = restTemplate.getForEntity(vehicleServiceUrl, Vehicle.class, serviceProviderId);
+            return (List<Vehicle>) responseEntity.getBody();
+        } catch (RestClientResponseException ex) {
+            throw new RuntimeException("Failed to get vehicles of service provider", ex);
+        }
+
+    }
 
 }

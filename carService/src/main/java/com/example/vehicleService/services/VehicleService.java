@@ -217,8 +217,8 @@ public static String uploadDirectory=System.getProperty("user.dir")+"/src/main/w
     }
 
 
-
-
-
-
+    public Boolean isgetVehicleById(Integer id) {
+        Vehicle vehicleResponsetiny = vehicleRepository.findById(id).get();
+        return vehicleResponsetiny.getIsAvaliable();
+    }
 }

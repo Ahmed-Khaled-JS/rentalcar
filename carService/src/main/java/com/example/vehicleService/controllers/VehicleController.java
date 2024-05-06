@@ -54,8 +54,8 @@ public ResponseEntity<Object> addVehicle(@ModelAttribute @Valid VehicleRequest v
     }
 
 
-    @GetMapping("/ownerVehicles")
-    public VehicleApiResponse getVehiclesByServiceProviderId(@RequestParam Integer serviceProviderId) {
+    @GetMapping("/ownerVehicles/{serviceProviderId}")
+    public VehicleApiResponse getVehiclesByServiceProviderId(@PathVariable Integer serviceProviderId) {
         return vehicleService.getVehiclesOfServiceProvider(serviceProviderId);
     }
 
@@ -81,7 +81,10 @@ public VehicleApiResponse retrieveVehicles(){
     }
 
 
-
+    @GetMapping("getCarById/{id}")
+    public Boolean getVehicleById(@PathVariable Integer id){
+        return vehicleService.isgetVehicleById(id);
+    }
     @ExceptionHandler(BindException.class)
 
     public ResponseEntity<HashMap<String, List<String>>> handleBindException(BindException ex){

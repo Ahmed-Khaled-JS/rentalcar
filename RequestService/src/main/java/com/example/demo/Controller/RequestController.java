@@ -1,33 +1,21 @@
 package com.example.demo.Controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.dto.Vehicle;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Model.Request;
 import com.example.demo.Model.Request.RequestStatus;
-import com.example.demo.Model.User;
-import com.example.demo.Model.Vehicle;
-import com.example.demo.Repository.UserRepository;
-import com.example.demo.Repository.VehicleRepo;
 import com.example.demo.Service.RequestService;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-
 
 
 @RestController
@@ -40,28 +28,16 @@ public class RequestController {
     @Autowired
     RequestService requestService;
 
-    @Autowired
-    VehicleRepo vehicleRepo;
 
-    @Autowired
-    UserRepository userRepo;
 
     @PostMapping("/makeRequest")
     public ResponseEntity<String> makeRequest(@RequestBody Map<String,String>request) {
 
-      //requestValidatyService.validateAndExtractUsername();
-
-      
-        //getting the token from the header
-        // final String jwt ;
-        // final String authHeader=request.getHeader("Authorization");
-        // jwt=authHeader.substring(7);
 
        String startstr= request.get("from");
        String endstr= request.get("to");
-       String model= request.get("model");
-
-
+       Integer carid= Integer.parseInt(request.get("carid"));
+       Integer userid= Integer.parseInt(request.get("userid"));
 
        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date start, end;
@@ -69,21 +45,7 @@ public class RequestController {
             Request r=new Request();
             start = dateFormat.parse(startstr);
             end = dateFormat.parse(endstr);
-            Optional<Vehicle> v = vehicleRepo.findBycarName(model);
-            Optional<User> u = userRepo.findById(3);//mehataa id el consumer haggebo men el token wala eh?
-            if (v.isPresent() && u.isPresent()) {
-                Vehicle vv = v.get();
-                User uu=u.get(); 
-                Long daysBetween = ChronoUnit.DAYS.between(start.toInstant(), end.toInstant());
-
-              Long totalPrice= daysBetween*(vv.getCarPricePerDay());
-               r.setFrom(start); r.setTo(end); r.setVehicle(vv); r.setUser(uu); r.setStatus(RequestStatus.UNDER_REVIEW);
-               r.setTotalPrice(totalPrice);
-            }
-            else {
-                return ResponseEntity.badRequest().body("No vehicle with this model is Found");
-               }
-            
+            r.setFrom(start); r.setTo(end); r.setVehicle(carid); r.setUser(userid); r.setStatus(RequestStatus.UNDER_REVIEW);
             boolean requestValid = requestService.makeRequest(r);
             if (requestValid) {
               //+ jwtService.extractUsername(jwt)
@@ -94,8 +56,6 @@ public class RequestController {
         } catch (ParseException e) {
             return ResponseEntity.badRequest().body("Invalid date format");
         }
-
-
      
         
     }
@@ -104,10 +64,11 @@ public class RequestController {
 
     @PutMapping("/updateRequest/{id}")
     public ResponseEntity<String> updateRequest(@RequestBody Map<String,String>request,@PathVariable Integer id) {
-        
+
         String startstr= request.get("from");
         String endstr= request.get("to");
-        String model= request.get("model");
+        Integer carid= Integer.parseInt(request.get("carid"));
+        Integer userid= Integer.parseInt(request.get("userid"));
  
  
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -118,18 +79,8 @@ public class RequestController {
         Request r=new Request();
         start = dateFormat.parse(startstr);
         end = dateFormat.parse(endstr);
-        Optional<Vehicle> v = vehicleRepo.findBycarName(model);//byt2ked en el model ely howa talbo mawgood 3ndena
-        Optional<User> u = userRepo.findById(1);//mehataa id el consumer haggebo men el token wala eh?
-        if (v.isPresent() && u.isPresent()) {
-            Vehicle   vv = v.get();
-            User uu=u.get();
-            Long daysBetween = ChronoUnit.DAYS.between(start.toInstant(), end.toInstant());
-            Long totalPrice= daysBetween*(vv.getCarPricePerDay());
-           r.setFrom(start); r.setTo(end); r.setVehicle(vv); r.setUser(uu); r.setStatus(RequestStatus.UNDER_REVIEW); r.setTotalPrice(totalPrice);
-      }
-      else {
-       return ResponseEntity.badRequest().body("No vehicle with this model is Found");
-      }
+        r.setFrom(start); r.setTo(end); r.setVehicle(carid); r.setUser(userid); r.setStatus(RequestStatus.UNDER_REVIEW);
+
       
       // if (!requestService.checkRequestStatus(id)){
       //   return ResponseEntity.status(HttpStatus.NOT_FOUND).body("your request can not be updated after it had been accepted or no request is found");}//accepted request can not be edited
@@ -146,6 +97,10 @@ public class RequestController {
        
     }
 
+    @GetMapping("/getrequesteByservid/{id}")
+    public List<Vehicle> getrequesteByservid(@PathVariable Integer id) {
+        return requestService.getVehiclesOfServiceProvider(id);
+    }
     //DELETE REQUEST
 
     @DeleteMapping("/DeleteRequest/{id}")

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://127.0.0.1:5501")
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
