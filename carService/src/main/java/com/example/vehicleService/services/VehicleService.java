@@ -67,7 +67,7 @@ public class VehicleService {
         return vehicles;
     }
 
-public static String uploadDirectory=System.getProperty("user.dir")+"/src/main/webapp/images";
+public static String uploadDirectory=System.getProperty("user.dir")+"/carService/src/main/webapp/images";
 
     public ResponseEntity<Object> addVehicle(VehicleRequest vehicleRequest,
               MultipartFile file)throws IOException {
