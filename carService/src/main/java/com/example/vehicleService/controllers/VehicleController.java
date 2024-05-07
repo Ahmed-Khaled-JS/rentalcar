@@ -59,13 +59,23 @@ public ResponseEntity<Object> addVehicle(@ModelAttribute @Valid VehicleRequest v
         return vehicleService.getVehiclesOfServiceProvider(serviceProviderId);
     }
 
-@GetMapping("/allVehicles")
-public VehicleApiResponse retrieveVehicles(){
+    @GetMapping("/allVehicles")
+    public VehicleApiResponse retrieveVehicles(){
 
-    return vehicleService.getVehicles() ;
+        return vehicleService.getVehicles() ;
 
-}
+    }
+    @PutMapping("/{carId}/available")
+    public ResponseEntity<String> updateAvailabilityToTrue(@PathVariable("carId") Integer carId) {
+        vehicleService.updateAvailabilityToTrue(carId);
+        return ResponseEntity.ok("Vehicle availability updated to true");
+    }
 
+    @PutMapping("/{carId}/unavailable")
+    public ResponseEntity<String> updateAvailabilityToFalse(@PathVariable("carId") Integer carId) {
+        vehicleService.updateAvailabilityToFalse(carId);
+        return ResponseEntity.ok("Vehicle availability updated to false");
+    }
 
     @GetMapping("/search")
     public VehicleApiResponse searchVehicles(@RequestParam("searchName") String query){

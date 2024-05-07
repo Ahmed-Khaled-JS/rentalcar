@@ -1,6 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.dto.Vehicle;
+import com.example.demo.dto.VehicleApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.Model.Request;
@@ -60,7 +61,18 @@ public class RequestController {
         
     }
 
-    //UPDATE REQUEST 
+    //UPDATE REQUEST
+    @PostMapping("/{requestId}/accept")
+    public ResponseEntity<String> acceptRequest(@PathVariable("requestId") Integer requestId) {
+        requestService.acceptRequest(requestId);
+        return ResponseEntity.ok("Request accepted successfully");
+    }
+
+    @PostMapping("/{requestId}/reject")
+    public ResponseEntity<String> rejectRequest(@PathVariable("requestId") Integer requestId) {
+        requestService.rejectRequest(requestId);
+        return ResponseEntity.ok("Request rejected successfully");
+    }
 
     @PutMapping("/updateRequest/{id}")
     public ResponseEntity<String> updateRequest(@RequestBody Map<String,String>request,@PathVariable Integer id) {
@@ -97,8 +109,9 @@ public class RequestController {
        
     }
 
+
     @GetMapping("/getrequesteByservid/{id}")
-    public List<Vehicle> getrequesteByservid(@PathVariable Integer id) {
+    public List<List<Request>> getrequesteByservid(@PathVariable Integer id) {
         return requestService.getVehiclesOfServiceProvider(id);
     }
     //DELETE REQUEST

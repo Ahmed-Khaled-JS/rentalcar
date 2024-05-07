@@ -100,7 +100,18 @@ public static String uploadDirectory=System.getProperty("user.dir")+"/src/main/w
 
 
     }
-
+    public void updateAvailabilityToTrue(Integer carId) {
+        Vehicle vehicle = vehicleRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + carId));
+        vehicle.setIsAvaliable(true);
+        vehicleRepository.save(vehicle);
+    }
+    public void updateAvailabilityToFalse(Integer carId) {
+        Vehicle vehicle = vehicleRepository.findById(carId)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + carId));
+        vehicle.setIsAvaliable(false);
+        vehicleRepository.save(vehicle);
+    }
 
     public VehicleApiResponse getVehiclesOfServiceProvider(Integer serviceProviderId){
 
