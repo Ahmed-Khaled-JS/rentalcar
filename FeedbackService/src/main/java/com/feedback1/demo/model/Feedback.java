@@ -24,13 +24,11 @@ public class Feedback {
    @Column(name="description")
    private String  description;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name="user_id")
+    private Integer userId;
 
-    @ManyToOne
-    @JoinColumn(name = "car_id")
-    private Vehicle vehicle;
+    @Column(name="car_id")
+    private Integer vehicleId;
 
 
     @CreationTimestamp
@@ -41,10 +39,10 @@ public class Feedback {
 
     }
     
-    public Feedback( String description, User user, Vehicle vehicle, LocalDateTime createdAt) {
+    public Feedback( String description, Integer user, Integer vehicle, LocalDateTime createdAt) {
         this.description = description;
-        this.user = user;
-        this.vehicle = vehicle;
+        this.userId = user;
+        this.vehicleId = vehicle;
         this.createdAt = createdAt;
     }
 
@@ -69,23 +67,23 @@ public class Feedback {
     }
 
 
-    public User getUser() {
-        return user;
+    public Integer getUser() {
+        return userId;
     }
 
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Integer user) {
+        this.userId = user;
     }
 
 
-    public Vehicle getVehicle() {
-        return vehicle;
+    public Integer getVehicle() {
+        return vehicleId;
     }
 
 
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
+    public void setVehicle(Integer vehicle) {
+        this.vehicleId = vehicle;
     }
 
 

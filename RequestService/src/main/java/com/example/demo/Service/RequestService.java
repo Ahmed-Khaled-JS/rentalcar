@@ -70,7 +70,7 @@ public class RequestService {
                 .orElseThrow(() -> new RuntimeException("Request not found"));
         request.setStatus(RequestStatus.REJECTED);
         requestRepo.save(request);
-        
+
     }
         public boolean makeRequest(Request r) {// make request
     
